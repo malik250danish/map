@@ -445,7 +445,7 @@
       }
     }
   </script> -->
-  <script type="text/javascript">
+  <!-- <script type="text/javascript">
     function loadMapScenario() {
       // Initialize the map
       var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
@@ -538,5 +538,139 @@
         console.error("Geolocation is not supported by this browser.");
       }
     }
+  </script> -->
+
+  <script>
+    function loadMapScenario() {
+  // Initialize the map
+  var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
+    credentials:
+      "Ak6VvJTxXQ-xowLySIS_5dvD9MXoK1BDmGP0fJ9_EOg0fI6EHiZqqitO6ftxDoCK",
+    center: new Microsoft.Maps.Location(0, 0), // Default center
+    zoom: 2, // Default zoom level
+  });
+
+  // Array to store information about each polygon
+  var polygonsData = [
+    { id: 1, name: "Polygon 1", description: "This is the first polygon." },
+    {
+      id: 2,
+      name: "Polygon 2",
+      description: "This is the second polygon.",
+    },
+    // Add more polygons with unique information
+  ];
+
+  // Try to get the user's location using Geolocation API
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        // On success, set the map center to the user's location
+        var userLocation = new Microsoft.Maps.Location(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+        map.setView({ center: userLocation, zoom: 12 });
+
+        // Add a pushpin marker at the user's location
+        var userPushpin = new Microsoft.Maps.Pushpin(userLocation, {
+          title: "Your Location",
+        });
+        map.entities.push(userPushpin);
+
+        // Example: Highlighting an area with a polygon around the user's location
+        var radius = 0.1; // Adjust the radius of the highlighted area as needed
+
+        var polygonCoordinates = [
+          new Microsoft.Maps.Location(
+            userLocation.latitude - radius,
+            userLocation.longitude - radius
+          ),
+          new Microsoft.Maps.Location(
+            userLocation.latitude - radius,
+            userLocation.longitude + radius
+          ),
+          new Microsoft.Maps.Location(
+            userLocation.latitude + radius,
+            userLocation.longitude + radius
+          ),
+          new Microsoft.Maps.Location(
+            userLocation.latitude + radius,
+            userLocation.longitude - radius
+          ),
+        ];
+
+        var polygon = new Microsoft.Maps.Polygon(polygonCoordinates, {
+          fillColor: "rgba(255, 0, 0, 0.5)", // Red with 50% opacity
+          strokeColor: "red",
+          strokeThickness: 2,
+        });
+
+        // Add a click event to the polygon to open the Bootstrap modal with specific information
+        Microsoft.Maps.Events.addHandler(polygon, "click", function () {
+          // Find the corresponding data for the clicked polygon
+          var clickedPolygonData = polygonsData.find(function (data) {
+            return data.id === 1; // Replace with a unique identifier for each polygon
+          });
+
+          // Populate the modal with information from the clicked polygon
+
+          // Show the modal
+          var myModal = new bootstrap.Modal(
+            document.getElementById("myModal")
+          );
+          myModal.show();
+        });
+
+        map.entities.push(polygon);
+
+        // Add markers and points of interest
+        var marker1Location = new Microsoft.Maps.Location(
+          userLocation.latitude + 0.1,
+          userLocation.longitude - 0.1
+        );
+        var marker1 = new Microsoft.Maps.Pushpin(marker1Location, {
+          title: "Marker 1",
+        });
+        map.entities.push(marker1);
+
+        var marker2Location = new Microsoft.Maps.Location(
+          userLocation.latitude - 0.2,
+          userLocation.longitude + 0.2
+        );
+        var marker2 = new Microsoft.Maps.Pushpin(marker2Location, {
+          title: "Marker 2",
+        });
+        map.entities.push(marker2);
+
+        // Add points of interest
+        var poi1Location = new Microsoft.Maps.Location(
+          userLocation.latitude + 0.15,
+          userLocation.longitude + 0.15
+        );
+        var poi1 = new Microsoft.Maps.Pushpin(poi1Location, {
+          title: "Point of Interest 1",
+        });
+        map.entities.push(poi1);
+
+        var poi2Location = new Microsoft.Maps.Location(
+          userLocation.latitude - 0.25,
+          userLocation.longitude - 0.25
+        );
+        var poi2 = new Microsoft.Maps.Pushpin(poi2Location, {
+          title: "Point of Interest 2",
+        });
+        map.entities.push(poi2);
+      },
+      function (error) {
+        // On error, handle the situation (e.g., show a message)
+        console.error("Error getting user location:", error.message);
+      }
+    );
+  } else {
+    console.error("Geolocation is not supported by this browser.");
+  }
+}
+
   </script>
 </html>
